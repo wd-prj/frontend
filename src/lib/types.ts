@@ -13,6 +13,9 @@ export interface UserProfile {
   status?: UserStatus;
   employee_id?: string;
   employee_name?: string;
+  full_name?: string;
+  first_name?: string;
+  last_name?: string;
   location_id?: string;
   location_name?: string;
   department_id?: string;

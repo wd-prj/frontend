@@ -82,7 +82,7 @@ export default function DashboardPage() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold mt-3 tracking-tight">
-            Welcome back, {profile?.employee_name || "Colleague"}
+            Welcome back, {profile?.employee_name || profile?.full_name || profile?.first_name || (profile?.email ? profile.email.split('@')[0] : "Colleague")}
           </h1>
           <p className="text-sm text-indigo-100 mt-1.5 max-w-xl leading-relaxed">
             Dynamic balances automatically reserve pending days and calculate exact regional
