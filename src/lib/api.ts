@@ -1,6 +1,7 @@
 import {
   UserProfile,
-  PersonaOption,
+  RegisterData,
+  OrgMetaResponse,
   LeaveTypeInfo,
   LeaveBalanceInfo,
   HolidayInfo,
@@ -52,19 +53,20 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
 
+  register: (data: RegisterData) =>
+    request<UserProfile>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  getOrgMetadata: () => request<OrgMetaResponse>("/auth/org-metadata"),
+
   logout: () =>
     request<{ message: string }>("/auth/logout", {
       method: "POST",
     }),
 
   getMe: () => request<UserProfile>("/auth/me"),
-
-  getPersonas: () => request<PersonaOption[]>("/auth/personas"),
-
-  switchPersona: (userId: string) =>
-    request<UserProfile>(`/auth/switch-persona/${userId}`, {
-      method: "POST",
-    }),
 
   // Employee
   getMyProfile: () => request<UserProfile>("/employee/profile"),

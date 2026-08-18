@@ -17,6 +17,26 @@ export interface UserProfile {
   designation?: string;
 }
 
+export interface OrgOption {
+  id: string;
+  name: string;
+}
+
+export interface OrgMetaResponse {
+  departments: OrgOption[];
+  locations: OrgOption[];
+}
+
+export interface RegisterData {
+  full_name: string;
+  email: string;
+  password: string;
+  designation?: string;
+  department_id?: string;
+  location_id?: string;
+  role?: UserRole;
+}
+
 export interface PersonaOption {
   id: string;
   name: string;

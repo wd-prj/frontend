@@ -45,18 +45,18 @@ export default function DashboardLayout({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white text-xs">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
-          <span>Verifying secure enterprise session...</span>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-700 text-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-5 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
+          <span className="font-semibold">Loading enterprise workspace...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
-      {/* Untitled UI Sidebar */}
+    <div className="min-h-screen bg-slate-50/70 flex">
+      {/* Sidebar */}
       <Sidebar
         user={user}
         onOpenAIChat={() => setIsAIChatOpen(true)}
@@ -69,7 +69,6 @@ export default function DashboardLayout({
         <TopNavbar
           user={user}
           onOpenAIChat={() => setIsAIChatOpen(true)}
-          onPersonaSwitched={fetchUserData}
         />
 
         {/* Dynamic Page Content */}

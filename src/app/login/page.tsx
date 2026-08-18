@@ -2,21 +2,55 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, ArrowRight, Shield, User, Building, MapPin } from "lucide-react";
+import {
+  Shield,
+  Lock,
+  Mail,
+  User,
+  Building2,
+  MapPin,
+  Briefcase,
+  ArrowRight,
+  Sparkles,
+  CheckCircle2,
+} from "lucide-react";
 import { api } from "@/lib/api";
-import { PersonaOption } from "@/lib/types";
+import { OrgMetaResponse, UserRole } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 
-export default function LoginPage() {
+export default function AuthPage() {
   const router = useRouter();
-  const [personas, setPersonas] = useState<PersonaOption[]>([]);
-  const [email, setEmail] = useState("arun.kumar@company.com");
-  const [password, setPassword] = useState("password123");
+  const [mode, setMode] = useState<"login" | "register">("login");
+
+  // Login form state
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  // Register form state
+  const [fullName, setFullName] = useState("");
+  const [regEmail, setRegEmail] = useState("");
+  const [regPassword, setRegPassword] = useState("");
+  const [designation, setDesignation] = useState("Software Engineer");
+  const [departmentId, setDepartmentId] = useState("");
+  const [locationId, setLocationId] = useState("");
+  const [role, setRole] = useState<UserRole>("EMPLOYEE");
+
+  // Org Metadata
+  const [orgMeta, setOrgMeta] = useState<OrgMetaResponse | null>(null);
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   useEffect(() => {
-    api.getPersonas().then(setPersonas).catch(() => {});
+    api
+      .getOrgMetadata()
+      .then((meta) => {
+        setOrgMeta(meta);
+        if (meta.departments.length > 0) setDepartmentId(meta.departments[0].id);
+        if (meta.locations.length > 0) setLocationId(meta.locations[0].id);
+      })
+      .catch(() => {});
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -25,7 +59,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      await api.login(email, password);
+      await api.login(loginEmail, loginPassword);
       router.push("/dashboard");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Authentication failed");
@@ -34,133 +68,277 @@ export default function LoginPage() {
     }
   };
 
-  const handleSelectPersona = async (personaId: string) => {
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
     setError("");
+
     try {
-      await api.switchPersona(personaId);
-      router.push("/dashboard");
+      await api.register({
+        full_name: fullName.trim(),
+        email: regEmail.trim(),
+        password: regPassword,
+        designation: designation.trim(),
+        department_id: departmentId,
+        location_id: locationId,
+        role: role,
+      });
+      setSuccessMsg("Account successfully registered! Logging you in...");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 800);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Persona switch failed");
+      setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50/80 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-2xl mx-auto shadow-md">
+        <div className="w-13 h-13 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-extrabold text-2xl mx-auto shadow-md">
           W
         </div>
-        <h2 className="mt-4 text-3xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="mt-4 text-3xl font-extrabold text-slate-900 tracking-tight">
           Workforce PTO Orchestration
-        </h2>
-        <p className="mt-2 text-sm text-slate-600">
-          AI-Powered Leave Platform with Deterministic Policy Verification
+        </h1>
+        <p className="mt-1.5 text-sm text-slate-600">
+          Policy-Aware Workforce Leave Management Platform
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-4xl px-4 sm:px-0">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-10 shadow-lg">
-          {/* Quick Demo Persona Switcher (Left Column) */}
-          <div className="md:col-span-7 space-y-4 border-b md:border-b-0 md:border-r border-slate-100 pb-8 md:pb-0 md:pr-8">
-            <div className="flex items-center gap-2 text-indigo-700 text-xs font-bold uppercase tracking-wider">
-              <Sparkles className="w-4 h-4 text-indigo-600" />
-              <span>Select Enterprise Persona</span>
-            </div>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Explore role-based boundaries, regional location rules (Chennai vs. Bangalore), and multi-tier approval workflows:
-            </p>
-
-            <div className="space-y-2.5 pt-1">
-              {personas.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => handleSelectPersona(p.id)}
-                  disabled={isLoading}
-                  className="w-full text-left p-3.5 rounded-2xl bg-slate-50/80 hover:bg-indigo-50/60 border border-slate-200/80 hover:border-indigo-300 transition-all flex items-center justify-between group shadow-2xs"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-full bg-white text-indigo-700 font-bold text-sm flex items-center justify-center border border-indigo-100 shadow-2xs shrink-0">
-                      {p.name.slice(0, 2).toUpperCase()}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">
-                          {p.name}
-                        </span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100/80 text-indigo-800 border border-indigo-200/60">
-                          {p.role}
-                        </span>
-                      </div>
-                      <span className="text-xs text-slate-500 block mt-0.5">
-                        {p.designation} • {p.location_name} Office
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
-                </button>
-              ))}
-            </div>
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-xl px-4 sm:px-0">
+        <div className="bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-10 shadow-lg space-y-6">
+          {/* Mode Switcher Tabs */}
+          <div className="grid grid-cols-2 gap-2 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200">
+            <button
+              type="button"
+              onClick={() => {
+                setMode("login");
+                setError("");
+              }}
+              className={`py-2.5 text-sm font-bold rounded-xl transition-all ${
+                mode === "login"
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMode("register");
+                setError("");
+              }}
+              className={`py-2.5 text-sm font-bold rounded-xl transition-all ${
+                mode === "register"
+                  ? "bg-white text-indigo-700 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Create Account
+            </button>
           </div>
 
-          {/* Direct Login Form (Right Column) */}
-          <div className="md:col-span-5 flex flex-col justify-center space-y-5">
-            <div className="flex items-center gap-2 text-slate-800 text-xs font-bold uppercase tracking-wider">
-              <Shield className="w-4 h-4 text-emerald-600" />
-              <span>Direct Sign-In</span>
+          {/* Feedback alerts */}
+          {error && (
+            <div className="rounded-xl bg-rose-50 border border-rose-200 p-3.5 text-xs font-semibold text-rose-800 animate-in fade-in-50">
+              {error}
             </div>
+          )}
 
-            {error && (
-              <div className="rounded-xl bg-rose-50 border border-rose-200 p-3.5 text-xs font-medium text-rose-800">
-                {error}
-              </div>
-            )}
+          {successMsg && (
+            <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3.5 text-xs font-semibold text-emerald-800 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{successMsg}</span>
+            </div>
+          )}
 
+          {mode === "login" ? (
+            /* Sign In Form */
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
                   Work Email
                 </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full rounded-xl bg-slate-50 border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                />
+                <div className="relative">
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  <input
+                    type="email"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    required
+                    placeholder="name@company.com"
+                    className="w-full rounded-xl bg-slate-50 border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
                   Password
                 </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full rounded-xl bg-slate-50 border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                />
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  <input
+                    type="password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                    placeholder="••••••••"
+                    className="w-full rounded-xl bg-slate-50 border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
               </div>
 
               <div className="pt-2">
                 <Button
                   type="submit"
                   isLoading={isLoading}
-                  className="w-full justify-center text-sm py-2.5 rounded-xl shadow-xs"
+                  className="w-full justify-center text-sm py-3 font-bold rounded-xl shadow-xs"
                 >
-                  Sign In
+                  Sign In to Workspace
                 </Button>
               </div>
-
-              <p className="text-xs text-center text-slate-500 pt-1">
-                Default demo password: <code className="font-semibold text-slate-700">password123</code>
-              </p>
             </form>
-          </div>
+          ) : (
+            /* Registration Form */
+            <form onSubmit={handleRegister} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                    placeholder="e.g. Alex Morgan"
+                    className="w-full rounded-xl bg-slate-50 border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                  Work Email
+                </label>
+                <div className="relative">
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  <input
+                    type="email"
+                    value={regEmail}
+                    onChange={(e) => setRegEmail(e.target.value)}
+                    required
+                    placeholder="alex.morgan@company.com"
+                    className="w-full rounded-xl bg-slate-50 border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                    Job Title / Designation
+                  </label>
+                  <div className="relative">
+                    <Briefcase className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                    <input
+                      type="text"
+                      value={designation}
+                      onChange={(e) => setDesignation(e.target.value)}
+                      required
+                      placeholder="e.g. Staff Engineer"
+                      className="w-full rounded-xl bg-slate-50 border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                    Account Role
+                  </label>
+                  <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value as UserRole)}
+                    className="w-full rounded-xl bg-slate-50 border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="EMPLOYEE">Employee (IC)</option>
+                    <option value="MANAGER">Manager / Team Lead</option>
+                    <option value="HR_ADMIN">HR Administrator</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                    Department
+                  </label>
+                  <select
+                    value={departmentId}
+                    onChange={(e) => setDepartmentId(e.target.value)}
+                    className="w-full rounded-xl bg-slate-50 border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    {orgMeta?.departments.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                    Office Location
+                  </label>
+                  <select
+                    value={locationId}
+                    onChange={(e) => setLocationId(e.target.value)}
+                    className="w-full rounded-xl bg-slate-50 border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    {orgMeta?.locations.map((l) => (
+                      <option key={l.id} value={l.id}>
+                        {l.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  <input
+                    type="password"
+                    value={regPassword}
+                    onChange={(e) => setRegPassword(e.target.value)}
+                    required
+                    placeholder="Create a strong password"
+                    className="w-full rounded-xl bg-slate-50 border border-slate-300 pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Button
+                  type="submit"
+                  isLoading={isLoading}
+                  className="w-full justify-center text-sm py-3 font-bold rounded-xl shadow-xs"
+                >
+                  Create Account & Enter Workspace
+                </Button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>
