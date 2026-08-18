@@ -17,7 +17,7 @@ import {
   AIChatResponse,
 } from "./types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://zenithhr-backend.onrender.com/api/v1";
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE}${endpoint}`;
@@ -25,6 +25,14 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   
   if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
+  }
+
+  // Attach Bearer token fallback if available in localStorage
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("zenith_token");
+    if (token && !headers.has("Authorization")) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
   }
 
   const response = await fetch(url, {
@@ -46,23 +54,39 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     throw new Error(errorMessage);
   }
 
-  return response.json();
+  const data = await response.json();
+
+  // If response contains access_token, save it to localStorage
+  if (data && typeof data === "object" && "access_token" in data && typeof window !== "undefined") {
+    localStorage.setItem("zenith_token", (data as any).access_token);
+  }
+
+  return data as T;
 }
 
 export const api = {
   // Auth
-  login: (email: string, password: string) =>
-    request<UserProfile>("/auth/login", {
+  login: async (email: string, password: string) => {
+    const res = await request<UserProfile & { access_token?: string }>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
-    }),
+    });
+    if (res.access_token && typeof window !== "undefined") {
+      localStorage.setItem("zenith_token", res.access_token);
+    }
+    return res;
+  },
 
   getOrgMetadata: () => request<OrgMetaResponse>("/auth/org-metadata"),
 
-  logout: () =>
-    request<{ message: string }>("/auth/logout", {
+  logout: async () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("zenith_token");
+    }
+    return request<{ message: string }>("/auth/logout", {
       method: "POST",
-    }),
+    });
+  },
 
   getMe: () => request<UserProfile>("/auth/me"),
 
@@ -70,11 +94,16 @@ export const api = {
   getInvitationDetails: (token: string) =>
     request<InvitationDetails>(`/auth/invitation-details?token=${encodeURIComponent(token)}`),
 
-  acceptInvitation: (token: string, password: string) =>
-    request<UserProfile>("/auth/accept-invitation", {
+  acceptInvitation: async (token: string, password: string) => {
+    const res = await request<UserProfile & { access_token?: string }>("/auth/accept-invitation", {
       method: "POST",
       body: JSON.stringify({ token, password }),
-    }),
+    });
+    if (res.access_token && typeof window !== "undefined") {
+      localStorage.setItem("zenith_token", res.access_token);
+    }
+    return res;
+  },
 
   // Provisioning & Team Hierarchy (HR Admin / Manager)
   inviteManager: (payload: InviteManagerPayload) =>
