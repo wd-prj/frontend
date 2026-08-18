@@ -30,7 +30,7 @@ export default function IntelligencePage() {
   }, []);
 
   if (isLoading || !overview) {
-    return <div className="p-12 text-center text-xs text-slate-400">Loading workforce intelligence...</div>;
+    return <div className="p-14 text-center text-sm text-slate-400">Loading workforce intelligence...</div>;
   }
 
   const {
@@ -45,50 +45,50 @@ export default function IntelligencePage() {
   } = overview;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+      <div className="flex items-center justify-between border-b border-slate-200/90 pb-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Workforce Leave Intelligence</h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Real-time workforce analytics, department utilization trends, and team absence coverage risks.
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Workforce Leave Intelligence</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Real-time workforce analytics, department utilization trends, and absence coverage risks.
           </p>
         </div>
-        <span className="text-xs px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200">
-          Enterprise Analytics Engine
+        <span className="text-xs px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">
+          Analytics Engine
         </span>
       </div>
 
       {/* Top Tremor Metric Cards */}
       <Grid numItemsSm={2} numItemsLg={4} className="gap-4">
-        <Card className="ring-1 ring-slate-200 shadow-xs bg-white rounded-xl">
-          <Text className="text-xs text-slate-500 font-medium uppercase">Total Workforce</Text>
-          <Metric className="text-2xl font-bold text-slate-900 mt-1">{total_employees}</Metric>
-          <Text className="text-xs text-slate-500 mt-1">Active employees</Text>
+        <Card className="ring-1 ring-slate-200/90 shadow-2xs bg-white rounded-2xl p-5">
+          <Text className="text-xs text-slate-500 font-bold uppercase tracking-wider">Total Workforce</Text>
+          <Metric className="text-3xl font-extrabold text-slate-900 mt-1.5">{total_employees}</Metric>
+          <Text className="text-xs text-slate-500 font-medium mt-1">Active employees</Text>
         </Card>
 
-        <Card className="ring-1 ring-slate-200 shadow-xs bg-white rounded-xl">
-          <Text className="text-xs text-slate-500 font-medium uppercase">On Leave Today</Text>
-          <Metric className="text-2xl font-bold text-emerald-600 mt-1">{currently_on_leave}</Metric>
-          <Text className="text-xs text-slate-500 mt-1">Scheduled absences</Text>
+        <Card className="ring-1 ring-slate-200/90 shadow-2xs bg-white rounded-2xl p-5">
+          <Text className="text-xs text-slate-500 font-bold uppercase tracking-wider">On Leave Today</Text>
+          <Metric className="text-3xl font-extrabold text-emerald-600 mt-1.5">{currently_on_leave}</Metric>
+          <Text className="text-xs text-slate-500 font-medium mt-1">Scheduled absences</Text>
         </Card>
 
-        <Card className="ring-1 ring-slate-200 shadow-xs bg-white rounded-xl">
-          <Text className="text-xs text-slate-500 font-medium uppercase">Pending Reviews</Text>
-          <Metric className="text-2xl font-bold text-amber-600 mt-1">{pending_approvals_count}</Metric>
-          <Text className="text-xs text-slate-500 mt-1">Awaiting manager action</Text>
+        <Card className="ring-1 ring-slate-200/90 shadow-2xs bg-white rounded-2xl p-5">
+          <Text className="text-xs text-slate-500 font-bold uppercase tracking-wider">Pending Reviews</Text>
+          <Metric className="text-3xl font-extrabold text-amber-600 mt-1.5">{pending_approvals_count}</Metric>
+          <Text className="text-xs text-slate-500 font-medium mt-1">Awaiting manager action</Text>
         </Card>
 
-        <Card className="ring-1 ring-slate-200 shadow-xs bg-white rounded-xl">
-          <Text className="text-xs text-slate-500 font-medium uppercase">Avg Quota Utilization</Text>
-          <Metric className="text-2xl font-bold text-indigo-600 mt-1">{avg_annual_leave_utilization}%</Metric>
-          <Text className="text-xs text-slate-500 mt-1">Annual leave burn rate</Text>
+        <Card className="ring-1 ring-slate-200/90 shadow-2xs bg-white rounded-2xl p-5">
+          <Text className="text-xs text-slate-500 font-bold uppercase tracking-wider">Avg Quota Burn Rate</Text>
+          <Metric className="text-3xl font-extrabold text-indigo-600 mt-1.5">{avg_annual_leave_utilization}%</Metric>
+          <Text className="text-xs text-slate-500 font-medium mt-1">Annual leave utilized</Text>
         </Card>
       </Grid>
 
       {/* Coverage Risk Alerts */}
       <div className="space-y-2">
-        <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+        <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
           Capacity & Coverage Insights
         </h3>
         <CoverageRiskBanner alerts={coverage_risk_alerts} />
@@ -96,8 +96,8 @@ export default function IntelligencePage() {
 
       {/* Tremor Visualizations */}
       <div className="space-y-2">
-        <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-          Utilization Trends & Breakdown
+        <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+          Utilization Trends & Category Breakdown
         </h3>
         <DepartmentUtilizationChart
           deptStats={department_stats}
@@ -106,54 +106,54 @@ export default function IntelligencePage() {
       </div>
 
       {/* Upcoming Absences Schedule */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-slate-900">Upcoming Scheduled Absences (Next 30 Days)</h3>
+            <h3 className="text-base font-bold text-slate-900">Upcoming Scheduled Absences (Next 30 Days)</h3>
             <p className="text-xs text-slate-500 mt-0.5">
               Workforce availability across Chennai and Bangalore offices
             </p>
           </div>
-          <span className="text-xs font-semibold text-slate-500">
+          <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
             {upcoming_absences.length} Scheduled
           </span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 border-b border-slate-100 uppercase tracking-wider text-[10px]">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-slate-50/80 text-slate-500 border-b border-slate-100 uppercase tracking-wider text-[10px]">
               <tr>
-                <th className="px-6 py-3 font-semibold">Employee</th>
-                <th className="px-6 py-3 font-semibold">Department</th>
-                <th className="px-6 py-3 font-semibold">Location</th>
-                <th className="px-6 py-3 font-semibold">Leave Type</th>
-                <th className="px-6 py-3 font-semibold">Dates</th>
-                <th className="px-6 py-3 font-semibold">Working Days</th>
-                <th className="px-6 py-3 font-semibold">Status</th>
+                <th className="px-6 py-3.5 font-bold">Employee</th>
+                <th className="px-6 py-3.5 font-bold">Department</th>
+                <th className="px-6 py-3.5 font-bold">Location</th>
+                <th className="px-6 py-3.5 font-bold">Leave Type</th>
+                <th className="px-6 py-3.5 font-bold">Dates</th>
+                <th className="px-6 py-3.5 font-bold">Working Days</th>
+                <th className="px-6 py-3.5 font-bold">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {upcoming_absences.map((u) => (
-                <tr key={u.id} className="hover:bg-slate-50">
-                  <td className="px-6 py-3 font-semibold text-slate-900">
+                <tr key={u.id} className="hover:bg-slate-50/80 transition-colors">
+                  <td className="px-6 py-4 font-bold text-slate-900">
                     {u.employee_name}
                   </td>
-                  <td className="px-6 py-3 text-slate-600">{u.department_name}</td>
-                  <td className="px-6 py-3 text-slate-600">{u.location_name}</td>
-                  <td className="px-6 py-3 font-medium text-slate-800 flex items-center gap-1.5">
+                  <td className="px-6 py-4 text-slate-600 font-medium">{u.department_name}</td>
+                  <td className="px-6 py-4 text-slate-600 font-medium">{u.location_name}</td>
+                  <td className="px-6 py-4 font-semibold text-slate-800 flex items-center gap-2">
                     <span
-                      className="w-2 h-2 rounded-full"
+                      className="w-2.5 h-2.5 rounded-full shrink-0"
                       style={{ backgroundColor: u.leave_type_color }}
                     />
                     {u.leave_type_name}
                   </td>
-                  <td className="px-6 py-3 text-slate-600 font-medium">
+                  <td className="px-6 py-4 text-slate-600 font-medium">
                     {formatDateRange(u.start_date, u.end_date)}
                   </td>
-                  <td className="px-6 py-3 text-slate-900 font-bold">{u.working_days}d</td>
-                  <td className="px-6 py-3">
+                  <td className="px-6 py-4 text-slate-900 font-extrabold">{u.working_days}d</td>
+                  <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${getStatusBadgeVariant(
+                      className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusBadgeVariant(
                         u.status
                       )}`}
                     >

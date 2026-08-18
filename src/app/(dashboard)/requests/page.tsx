@@ -90,18 +90,18 @@ export default function RequestsPage() {
   return (
     <div className="space-y-6">
       {/* Header & Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/90 pb-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Leave Requests & What-If Sandbox</h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Track historical leave status or run read-only hypothetical absence projections.
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Leave History & Projections</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Track historical leave status or run hypothetical absence projections.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-slate-200/70 p-1 rounded-xl">
+        <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
           <button
             onClick={() => setActiveTab("history")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               activeTab === "history"
                 ? "bg-white text-slate-900 shadow-xs"
                 : "text-slate-600 hover:text-slate-900"
@@ -114,13 +114,13 @@ export default function RequestsPage() {
               setActiveTab("whatif");
               if (!whatIfResult) handleRunSimulation();
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
               activeTab === "whatif"
                 ? "bg-white text-indigo-700 shadow-xs"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
+            <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
             What-If Simulator
           </button>
         </div>
@@ -130,16 +130,16 @@ export default function RequestsPage() {
         <div className="space-y-4">
           {/* Status Filter Chips */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
+            <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
               <Filter className="w-3.5 h-3.5" /> Filter:
             </span>
             {["ALL", "PENDING", "APPROVED", "REJECTED", "CANCELLED"].map((st) => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                   statusFilter === st
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-indigo-600 text-white shadow-2xs"
                     : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
                 }`}
               >
@@ -149,25 +149,25 @@ export default function RequestsPage() {
           </div>
 
           {/* Table */}
-          <Card>
+          <Card className="rounded-2xl border-slate-200/90 shadow-2xs">
             <CardContent className="p-0">
               {isLoading ? (
-                <div className="p-8 text-center text-xs text-slate-400">Loading requests...</div>
+                <div className="p-12 text-center text-sm text-slate-400">Loading requests...</div>
               ) : requests.length === 0 ? (
-                <div className="p-8 text-center text-xs text-slate-400">
+                <div className="p-12 text-center text-sm text-slate-400">
                   No requests matching this filter.
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50 text-slate-500 border-b border-slate-100 uppercase tracking-wider text-[10px]">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-slate-50/80 text-slate-500 border-b border-slate-100 uppercase tracking-wider text-[10px]">
                       <tr>
-                        <th className="px-6 py-3 font-semibold">Type</th>
-                        <th className="px-6 py-3 font-semibold">Date Range</th>
-                        <th className="px-6 py-3 font-semibold">Working Days</th>
-                        <th className="px-6 py-3 font-semibold">Status</th>
-                        <th className="px-6 py-3 font-semibold">Submitted</th>
-                        <th className="px-6 py-3 font-semibold text-right">Action</th>
+                        <th className="px-6 py-4 font-bold">Leave Type</th>
+                        <th className="px-6 py-4 font-bold">Date Range</th>
+                        <th className="px-6 py-4 font-bold">Working Days</th>
+                        <th className="px-6 py-4 font-bold">Status</th>
+                        <th className="px-6 py-4 font-bold">Submitted</th>
+                        <th className="px-6 py-4 font-bold text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -177,33 +177,33 @@ export default function RequestsPage() {
                           className="hover:bg-slate-50/80 transition-colors cursor-pointer"
                           onClick={() => setSelectedRequest(req)}
                         >
-                          <td className="px-6 py-3.5 font-medium text-slate-900 flex items-center gap-2">
+                          <td className="px-6 py-4 font-bold text-slate-900 flex items-center gap-2.5">
                             <span
-                              className="w-2 h-2 rounded-full"
+                              className="w-2.5 h-2.5 rounded-full shrink-0"
                               style={{ backgroundColor: req.leave_type_color }}
                             />
                             {req.leave_type_name}
                           </td>
-                          <td className="px-6 py-3.5 text-slate-600">
+                          <td className="px-6 py-4 text-slate-600 font-medium">
                             {formatDateRange(req.start_date, req.end_date)}
                           </td>
-                          <td className="px-6 py-3.5 text-slate-900 font-semibold">
+                          <td className="px-6 py-4 text-slate-900 font-extrabold">
                             {req.working_days}d
                           </td>
-                          <td className="px-6 py-3.5">
+                          <td className="px-6 py-4">
                             <span
-                              className={`px-2 py-0.5 rounded-md text-[11px] font-semibold border ${getStatusBadgeVariant(
+                              className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusBadgeVariant(
                                 req.status
                               )}`}
                             >
                               {req.status}
                             </span>
                           </td>
-                          <td className="px-6 py-3.5 text-slate-500">
+                          <td className="px-6 py-4 text-slate-500 font-medium">
                             {formatDate(req.created_at)}
                           </td>
-                          <td className="px-6 py-3.5 text-right">
-                            <span className="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center gap-1">
+                          <td className="px-6 py-4 text-right">
+                            <span className="text-indigo-600 hover:text-indigo-800 font-bold inline-flex items-center gap-1 text-xs">
                               Details <ChevronRight className="w-3.5 h-3.5" />
                             </span>
                           </td>
@@ -219,36 +219,36 @@ export default function RequestsPage() {
       ) : (
         /* What-If Simulation Tab */
         <div className="space-y-6">
-          <div className="rounded-xl border border-indigo-200 bg-indigo-50/50 p-4 flex items-center justify-between">
+          <div className="rounded-2xl border border-indigo-200 bg-indigo-50/60 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Sparkles className="w-5 h-5 text-indigo-600 shrink-0" />
               <div>
                 <h4 className="text-xs font-bold text-indigo-950 uppercase tracking-wider">
                   Read-Only Projection Mode
                 </h4>
-                <p className="text-xs text-indigo-800 mt-0.5">
-                  Simulate future time off. Computes calendar exclusions, projected balance after,
+                <p className="text-xs text-indigo-800 mt-0.5 font-medium">
+                  Simulate future absences to compute calendar exclusions, projected balance after,
                   and approval routes without modifying the database.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-5 space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Simulation Parameters</CardTitle>
+              <Card className="rounded-2xl border-slate-200/90 shadow-2xs">
+                <CardHeader className="border-b border-slate-100 pb-3.5">
+                  <CardTitle className="text-base font-bold text-slate-900">Simulation Parameters</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 pt-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
                       Leave Type
                     </label>
                     <select
                       value={whatIfTypeId}
                       onChange={(e) => setWhatIfTypeId(e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                       {leaveTypes.map((t) => (
                         <option key={t.id} value={t.id}>
@@ -260,25 +260,25 @@ export default function RequestsPage() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
                         Start Date
                       </label>
                       <input
                         type="date"
                         value={whatIfStart}
                         onChange={(e) => setWhatIfStart(e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
                         End Date
                       </label>
                       <input
                         type="date"
                         value={whatIfEnd}
                         onChange={(e) => setWhatIfEnd(e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                     </div>
                   </div>
@@ -286,7 +286,7 @@ export default function RequestsPage() {
                   <Button
                     onClick={handleRunSimulation}
                     isLoading={isSimulating}
-                    className="w-full text-xs py-2"
+                    className="w-full text-sm font-bold py-2.5 rounded-xl shadow-xs"
                   >
                     Simulate Leave Impact
                   </Button>
@@ -313,19 +313,19 @@ export default function RequestsPage() {
         width="lg"
       >
         {selectedRequest && (
-          <div className="space-y-6 text-xs">
+          <div className="space-y-6 text-sm">
             {/* Header info */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <span className="text-xs font-bold text-slate-900 block">
+                <span className="text-base font-bold text-slate-900 block">
                   {selectedRequest.leave_type_name}
                 </span>
-                <span className="text-slate-500">
+                <span className="text-xs text-slate-500 font-medium mt-0.5 block">
                   {formatDateRange(selectedRequest.start_date, selectedRequest.end_date)}
                 </span>
               </div>
               <span
-                className={`px-2.5 py-1 rounded-md font-semibold border ${getStatusBadgeVariant(
+                className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusBadgeVariant(
                   selectedRequest.status
                 )}`}
               >
@@ -334,24 +334,24 @@ export default function RequestsPage() {
             </div>
 
             {/* Impact stats */}
-            <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
+            <div className="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
               <div>
-                <span className="text-[10px] text-slate-500 block">Calendar Days</span>
-                <span className="text-sm font-bold text-slate-800">
+                <span className="text-xs text-slate-500 font-bold block">Calendar Days</span>
+                <span className="text-lg font-extrabold text-slate-800">
                   {selectedRequest.calendar_days}d
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-slate-500 block">Non-Working Days</span>
-                <span className="text-sm font-bold text-slate-800">
+                <span className="text-xs text-slate-500 font-bold block">Non-Working</span>
+                <span className="text-lg font-extrabold text-slate-800">
                   {selectedRequest.weekend_days + selectedRequest.holiday_days}d
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-indigo-700 font-semibold block">
+                <span className="text-xs text-indigo-700 font-bold block">
                   Net Deducted
                 </span>
-                <span className="text-sm font-bold text-indigo-900">
+                <span className="text-lg font-extrabold text-indigo-900">
                   {selectedRequest.working_days}d
                 </span>
               </div>
@@ -359,30 +359,34 @@ export default function RequestsPage() {
 
             {/* Reason */}
             <div>
-              <span className="font-semibold text-slate-700 block mb-1">Reason:</span>
-              <p className="p-3 bg-slate-50 rounded-lg text-slate-700 border border-slate-100">
+              <span className="font-bold text-slate-700 text-xs uppercase tracking-wider block mb-1.5">
+                Reason:
+              </span>
+              <p className="p-3.5 bg-slate-50 rounded-xl text-slate-800 border border-slate-200/80 leading-relaxed text-sm font-medium">
                 {selectedRequest.reason}
               </p>
             </div>
 
             {/* Rejection Reason if any */}
             {selectedRequest.rejection_reason && (
-              <div className="rounded-lg bg-rose-50 border border-rose-200 p-3 text-rose-800">
-                <span className="font-semibold block mb-0.5">Rejection Reason:</span>
-                <p>{selectedRequest.rejection_reason}</p>
+              <div className="rounded-xl bg-rose-50 border border-rose-200 p-4 text-rose-800">
+                <span className="font-bold text-xs uppercase tracking-wider block mb-1">
+                  Rejection Reason:
+                </span>
+                <p className="text-sm font-medium">{selectedRequest.rejection_reason}</p>
               </div>
             )}
 
             {/* Approval Workflow Steps Timeline */}
             <div>
-              <span className="font-semibold text-slate-700 block mb-2">
+              <span className="font-bold text-slate-700 text-xs uppercase tracking-wider block mb-3">
                 Multi-Tier Approval Timeline:
               </span>
-              <div className="space-y-3 pl-2 border-l-2 border-slate-200">
+              <div className="space-y-4 pl-3 border-l-2 border-indigo-200">
                 {selectedRequest.approval_steps.map((step) => (
-                  <div key={step.id} className="relative pl-4">
+                  <div key={step.id} className="relative pl-5">
                     <span
-                      className={`absolute -left-[13px] top-0.5 w-4 h-4 rounded-full border-2 bg-white ${
+                      className={`absolute -left-[19px] top-1 w-4 h-4 rounded-full border-2 bg-white ${
                         step.status === "APPROVED"
                           ? "border-emerald-500 text-emerald-500"
                           : step.status === "REJECTED"
@@ -391,7 +395,7 @@ export default function RequestsPage() {
                       }`}
                     />
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-slate-800">
+                      <span className="font-bold text-slate-900 text-sm">
                         Step {step.step_order}: {step.required_role} ({step.approver_name})
                       </span>
                       <Badge
@@ -407,7 +411,7 @@ export default function RequestsPage() {
                       </Badge>
                     </div>
                     {step.comments && (
-                      <p className="text-slate-500 text-[11px] mt-1 italic">
+                      <p className="text-slate-600 text-xs mt-1 italic">
                         &quot;{step.comments}&quot;
                       </p>
                     )}
@@ -424,7 +428,7 @@ export default function RequestsPage() {
                   size="sm"
                   onClick={() => handleCancelRequest(selectedRequest.id)}
                   leftIcon={<XCircle className="w-4 h-4" />}
-                  className="w-full"
+                  className="w-full font-bold py-2.5 rounded-xl"
                 >
                   Cancel Pending Request
                 </Button>

@@ -31,10 +31,10 @@ interface AIChatDrawerProps {
 }
 
 const STARTER_PROMPTS = [
-  "Can I take leave from August 20 to August 25?",
+  "Can I take leave from August 24 to August 28?",
   "How much leave balance do I have left?",
-  "Which holidays apply to me in my location?",
-  "What approval is required if I take 4 days off?",
+  "Which holidays apply to me in my office location?",
+  "What approval is required if I take 5 days off?",
 ];
 
 export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({ isOpen, onClose }) => {
@@ -43,7 +43,7 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({ isOpen, onClose }) =
       id: "welcome",
       role: "assistant",
       content:
-        "Hello! I am your AI Leave & Workforce Copilot. Ask me about your dynamic leave balances, holiday schedules, policy rules, or hypothetical time-off scenarios.",
+        "Hello! I am your AI Leave & Workforce Copilot powered by deterministic HR domain tools. Ask me about your live balances, location holidays, policy rules, or hypothetical time-off scenarios.",
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
@@ -69,7 +69,6 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({ isOpen, onClose }) =
     setIsLoading(true);
 
     try {
-      // Build history
       const history = newMessages.slice(-6).map((m) => ({
         role: m.role,
         content: m.content,
@@ -115,12 +114,12 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({ isOpen, onClose }) =
           {messages.map((m) => (
             <div
               key={m.id}
-              className={`flex gap-3 ${
+              className={`flex gap-3.5 ${
                 m.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
               {m.role === "assistant" && (
-                <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5 border border-indigo-200">
+                <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 mt-0.5 border border-indigo-200 shadow-2xs">
                   <Sparkles className="w-4 h-4" />
                 </div>
               )}
@@ -128,8 +127,8 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({ isOpen, onClose }) =
               <div
                 className={`max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed ${
                   m.role === "user"
-                    ? "bg-indigo-600 text-white rounded-br-xs"
-                    : "bg-slate-50 border border-slate-200 text-slate-800 rounded-tl-xs shadow-xs"
+                    ? "bg-indigo-600 text-white rounded-br-xs shadow-xs font-medium"
+                    : "bg-slate-50 border border-slate-200/90 text-slate-800 rounded-tl-xs shadow-2xs"
                 }`}
               >
                 {/* Text Content */}
@@ -137,16 +136,16 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({ isOpen, onClose }) =
 
                 {/* Grounded Tool Execution Badges */}
                 {m.responseObj && m.responseObj.tool_calls_executed.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-slate-200/80 space-y-2">
-                    <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block flex items-center gap-1">
-                      <Layers className="w-3 h-3 text-indigo-500" />
+                  <div className="mt-3.5 pt-3 border-t border-slate-200/80 space-y-2">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block flex items-center gap-1.5">
+                      <Layers className="w-3.5 h-3.5 text-indigo-600" />
                       Verified Domain Tools Executed:
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {m.responseObj.tool_calls_executed.map((tc, idx) => (
                         <span
                           key={idx}
-                          className="text-[11px] bg-white border border-slate-300 rounded px-2 py-0.5 font-mono text-slate-700 shadow-2xs"
+                          className="text-[11px] bg-white border border-slate-300 rounded-md px-2.5 py-0.5 font-mono font-semibold text-slate-700 shadow-2xs"
                         >
                           {tc.tool_name}()
                         </span>
@@ -157,20 +156,20 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({ isOpen, onClose }) =
               </div>
 
               {m.role === "user" && (
-                <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center shrink-0 mt-0.5">
-                  <UserIcon className="w-4 h-4" />
+                <div className="w-9 h-9 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 mt-0.5 border border-slate-300">
+                  <UserIcon className="w-4.5 h-4.5" />
                 </div>
               )}
             </div>
           ))}
 
           {isLoading && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-200">
-                <Loader2 className="w-4 h-4 animate-spin" />
+            <div className="flex gap-3.5">
+              <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 border border-indigo-200">
+                <Loader2 className="w-4.5 h-4.5 animate-spin" />
               </div>
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl rounded-tl-xs p-4 text-xs text-slate-500 flex items-center gap-2">
-                <span>Orchestrating deterministic HR tools & verifying policies...</span>
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl rounded-tl-xs p-4 text-xs text-slate-600 flex items-center gap-2 font-medium">
+                <span>Orchestrating deterministic HR tools with OpenCode Zen...</span>
               </div>
             </div>
           )}
@@ -180,14 +179,14 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({ isOpen, onClose }) =
 
         {/* Starter Prompts */}
         {messages.length <= 2 && (
-          <div className="space-y-1.5 pt-2 border-t border-slate-100">
-            <span className="text-xs font-medium text-slate-500 block">Suggested Inquiries:</span>
+          <div className="space-y-2 pt-2 border-t border-slate-100">
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider block">Suggested Questions:</span>
             <div className="grid grid-cols-1 gap-1.5">
               {STARTER_PROMPTS.map((p, i) => (
                 <button
                   key={i}
                   onClick={() => handleSendMessage(p)}
-                  className="text-left text-xs bg-slate-50 hover:bg-indigo-50/70 hover:border-indigo-200 text-slate-700 p-2 rounded-lg border border-slate-200 transition-colors"
+                  className="text-left text-xs font-semibold bg-slate-50 hover:bg-indigo-50/80 hover:border-indigo-300 text-slate-800 p-2.5 rounded-xl border border-slate-200 transition-colors shadow-2xs"
                 >
                   💬 {p}
                 </button>
@@ -209,14 +208,14 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({ isOpen, onClose }) =
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="Ask about policies, balances, or proposed leaves..."
-            className="flex-1 rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+            className="flex-1 rounded-xl border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
             disabled={isLoading}
           />
           <Button
             type="submit"
             disabled={!inputMessage.trim() || isLoading}
             isLoading={isLoading}
-            className="shrink-0"
+            className="shrink-0 rounded-xl px-4 py-2.5 font-bold"
           >
             <Send className="w-4 h-4" />
           </Button>
