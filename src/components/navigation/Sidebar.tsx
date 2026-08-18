@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import Link from "next/navigation";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -11,10 +11,10 @@ import {
   BarChart3,
   ShieldCheck,
   Sparkles,
-  ChevronRight,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { UserProfile } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { Logo } from "@/components/brand/Logo";
 
 interface SidebarProps {
   user: UserProfile | null;
@@ -51,25 +51,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside className="w-64 bg-white border-r border-slate-200/90 flex flex-col shrink-0 h-screen sticky top-0 shadow-2xs z-20">
       {/* Brand Header */}
-      <div className="h-16 px-6 flex items-center gap-3 border-b border-slate-100 bg-white">
-        <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-base shadow-sm">
-          W
-        </div>
-        <div>
-          <span className="font-bold text-slate-900 text-sm tracking-tight block">
-            Workforce PTO
-          </span>
-          <span className="text-[11px] text-indigo-600 font-semibold tracking-wider uppercase block">
-            Orchestration
-          </span>
-        </div>
+      <div className="h-16 px-5 flex items-center border-b border-slate-100 bg-white">
+        <Logo size="sm" />
       </div>
 
       {/* AI Assistant Quick Launcher Banner */}
       <div className="p-4">
         <button
           onClick={onOpenAIChat}
-          className="w-full rounded-xl bg-gradient-to-br from-indigo-50 via-white to-indigo-50/70 p-3.5 text-left border border-indigo-200/80 shadow-2xs hover:border-indigo-400 hover:shadow-xs transition-all group"
+          className="w-full rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-indigo-50/60 p-3.5 text-left border border-indigo-200/80 shadow-2xs hover:border-indigo-400 hover:shadow-xs transition-all group"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 font-bold text-xs text-indigo-900">
@@ -95,7 +85,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           const isActive = pathname === item.href;
           const Icon = item.icon;
           return (
-            <Link
+            <a
               key={item.name}
               href={item.href}
               className={cn(
@@ -119,29 +109,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   {item.badge}
                 </span>
               )}
-            </Link>
+            </a>
           );
         })}
       </nav>
 
-      {/* Current Logged-in User Profile Bar */}
-      {user && (
-        <div className="p-4 border-t border-slate-100 bg-slate-50/60">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center border border-indigo-200 shrink-0">
-              {user.employee_name ? user.employee_name.slice(0, 2).toUpperCase() : "ME"}
-            </div>
-            <div className="flex-1 min-w-0">
-              <span className="text-xs font-bold text-slate-900 truncate block">
-                {user.employee_name || user.email}
-              </span>
-              <span className="text-[11px] text-slate-500 truncate block">
-                {user.role} • {user.location_name || "HQ"}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Footer Version Info */}
+      <div className="p-4 border-t border-slate-100 text-center">
+        <span className="text-[11px] font-medium text-slate-400">
+          ZenithHR Platform v1.2
+        </span>
+      </div>
     </aside>
   );
 };
