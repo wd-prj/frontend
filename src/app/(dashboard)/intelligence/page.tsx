@@ -15,7 +15,7 @@ import { api } from "@/lib/api";
 import { WorkforceIntelligenceOverview } from "@/lib/types";
 import { DepartmentUtilizationChart } from "@/components/analytics/DepartmentUtilizationChart";
 import { CoverageRiskBanner } from "@/components/analytics/CoverageRiskBanner";
-import { formatDateRange, getStatusBadgeVariant } from "@/lib/utils";
+import { formatDateRange, getStatusBadgeVariant, formatDays } from "@/lib/utils";
 
 export default function IntelligencePage() {
   const [overview, setOverview] = useState<WorkforceIntelligenceOverview | null>(null);
@@ -150,7 +150,7 @@ export default function IntelligencePage() {
                   <td className="px-6 py-4 text-slate-600 font-medium">
                     {formatDateRange(u.start_date, u.end_date)}
                   </td>
-                  <td className="px-6 py-4 text-slate-900 font-extrabold">{u.working_days}d</td>
+                  <td className="px-6 py-4 text-slate-900 font-extrabold">{formatDays(u.working_days)}d</td>
                   <td className="px-6 py-4">
                     <span
                       className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusBadgeVariant(

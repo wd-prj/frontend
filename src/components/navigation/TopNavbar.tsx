@@ -9,6 +9,7 @@ import {
   MapPin,
   Building2,
   User as UserIcon,
+  Check,
 } from "lucide-react";
 import { UserProfile, NotificationItem } from "@/lib/types";
 import { api } from "@/lib/api";
@@ -29,6 +30,18 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   useEffect(() => {
     api.getNotifications().then(setNotifications).catch(() => {});
   }, []);
+
+  const handleToggleNotifications = () => {
+    const nextState = !isNotificationsOpen;
+    setIsNotificationsOpen(nextState);
+
+    if (nextState && unreadNotificationsCount > 0) {
+      // Immediately clear the red dot in UI
+      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+      // Persist read status in backend
+      api.markAllNotificationsRead().catch(() => {});
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -73,35 +86,39 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         {/* Notifications Popover */}
         <div className="relative">
           <button
-            onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+            onClick={handleToggleNotifications}
             className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 relative transition-colors"
+            title="Notifications"
           >
             <Bell className="w-4.5 h-4.5" />
             {unreadNotificationsCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-white" />
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-white animate-pulse" />
             )}
           </button>
 
           {isNotificationsOpen && (
-            <div className="absolute right-0 mt-2 w-80 rounded-2xl bg-white border border-slate-200 shadow-xl py-2 z-50">
+            <div className="absolute right-0 mt-2 w-84 rounded-2xl bg-white border border-slate-200 shadow-xl py-2 z-50 animate-in fade-in-50 zoom-in-95">
               <div className="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-900">Notifications</span>
-                {unreadNotificationsCount > 0 && (
-                  <span className="text-[11px] font-semibold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full">
-                    {unreadNotificationsCount} unread
-                  </span>
-                )}
+                <span className="text-[11px] font-semibold text-slate-400">
+                  {notifications.length} total
+                </span>
               </div>
-              <div className="max-h-64 overflow-y-auto divide-y divide-slate-50">
+              <div className="max-h-72 overflow-y-auto divide-y divide-slate-50">
                 {notifications.length === 0 ? (
-                  <div className="p-4 text-center text-xs text-slate-400">
+                  <div className="p-6 text-center text-xs text-slate-400">
                     No new notifications
                   </div>
                 ) : (
                   notifications.map((n) => (
-                    <div key={n.id} className="p-3.5 hover:bg-slate-50 text-left">
-                      <h5 className="text-xs font-bold text-slate-800">{n.title}</h5>
-                      <p className="text-xs text-slate-500 mt-0.5">{n.message}</p>
+                    <div key={n.id} className="p-3.5 hover:bg-slate-50/80 text-left transition-colors">
+                      <div className="flex items-center justify-between">
+                        <h5 className="text-xs font-bold text-slate-800">{n.title}</h5>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          {n.created_at ? n.created_at.slice(11, 16) : ""}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">{n.message}</p>
                     </div>
                   ))
                 )}

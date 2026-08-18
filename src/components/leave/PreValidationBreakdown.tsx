@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { PreValidationResponse } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
+import { formatDays } from "@/lib/utils";
 
 interface PreValidationBreakdownProps {
   validation: PreValidationResponse | null;
@@ -94,19 +95,19 @@ export const PreValidationBreakdown: React.FC<PreValidationBreakdownProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-slate-50/80 rounded-xl p-3.5 border border-slate-100">
           <span className="text-xs font-bold text-slate-500 block">Calendar Days</span>
-          <span className="text-2xl font-extrabold text-slate-900 mt-0.5 block">{calendar_days}d</span>
+          <span className="text-2xl font-extrabold text-slate-900 mt-0.5 block">{formatDays(calendar_days)}d</span>
         </div>
         <div className="bg-slate-50/80 rounded-xl p-3.5 border border-slate-100">
           <span className="text-xs font-bold text-slate-500 block">Weekends</span>
-          <span className="text-2xl font-extrabold text-slate-600 mt-0.5 block">-{weekend_days}d</span>
+          <span className="text-2xl font-extrabold text-slate-600 mt-0.5 block">-{formatDays(weekend_days)}d</span>
         </div>
         <div className="bg-slate-50/80 rounded-xl p-3.5 border border-slate-100">
           <span className="text-xs font-bold text-slate-500 block">Location Holidays</span>
-          <span className="text-2xl font-extrabold text-amber-600 mt-0.5 block">-{holiday_days}d</span>
+          <span className="text-2xl font-extrabold text-amber-600 mt-0.5 block">-{formatDays(holiday_days)}d</span>
         </div>
         <div className="bg-indigo-50/80 rounded-xl p-3.5 border border-indigo-100">
           <span className="text-xs font-bold text-indigo-700 block">Net Working Days</span>
-          <span className="text-2xl font-extrabold text-indigo-950 mt-0.5 block">{working_days}d</span>
+          <span className="text-2xl font-extrabold text-indigo-950 mt-0.5 block">{formatDays(working_days)}d</span>
         </div>
       </div>
 
@@ -118,7 +119,7 @@ export const PreValidationBreakdown: React.FC<PreValidationBreakdownProps> = ({
           </span>
           <div className="flex items-center gap-2.5 mt-1.5">
             <span className="text-sm font-bold text-slate-800">
-              {available_balance_before} days
+              {formatDays(available_balance_before)} days
             </span>
             <ArrowRight className="w-4 h-4 text-slate-400" />
             <span
@@ -126,10 +127,10 @@ export const PreValidationBreakdown: React.FC<PreValidationBreakdownProps> = ({
                 available_balance_after < 0 ? "text-rose-600" : "text-emerald-700"
               }`}
             >
-              {available_balance_after} days
+              {formatDays(available_balance_after)} days
             </span>
             <span className="text-xs text-slate-500 font-medium">
-              (-{working_days}d pending reserve)
+              (-{formatDays(working_days)}d pending reserve)
             </span>
           </div>
         </div>
@@ -212,7 +213,7 @@ export const PreValidationBreakdown: React.FC<PreValidationBreakdownProps> = ({
               >
                 <span className="font-bold">{c.employee_name}</span>
                 <span className="text-slate-500">
-                  {c.start_date} to {c.end_date} ({c.working_days}d {c.status})
+                  {c.start_date} to {c.end_date} ({formatDays(c.working_days)}d {c.status})
                 </span>
               </div>
             ))}

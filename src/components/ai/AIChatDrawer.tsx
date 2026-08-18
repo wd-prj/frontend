@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import {
   Sparkles,
   Send,
@@ -131,8 +133,62 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({ isOpen, onClose }) =
                     : "bg-slate-50 border border-slate-200/90 text-slate-800 rounded-tl-xs shadow-2xs"
                 }`}
               >
-                {/* Text Content */}
-                <div className="whitespace-pre-wrap">{m.content}</div>
+                {/* Formatted Markdown Content */}
+                {m.role === "assistant" ? (
+                  <div className="prose prose-slate prose-sm max-w-none text-slate-800">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        h1: ({ children }) => (
+                          <h1 className="text-base font-bold text-slate-900 mt-2 mb-1.5">{children}</h1>
+                        ),
+                        h2: ({ children }) => (
+                          <h2 className="text-sm font-bold text-slate-900 mt-2 mb-1.5">{children}</h2>
+                        ),
+                        h3: ({ children }) => (
+                          <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-950 mt-2.5 mb-1 flex items-center gap-1.5">
+                            {children}
+                          </h3>
+                        ),
+                        p: ({ children }) => (
+                          <p className="mb-2 last:mb-0 leading-relaxed text-sm">{children}</p>
+                        ),
+                        ul: ({ children }) => (
+                          <ul className="list-disc pl-5 space-y-1 my-1.5 text-sm">{children}</ul>
+                        ),
+                        ol: ({ children }) => (
+                          <ol className="list-decimal pl-5 space-y-1 my-1.5 text-sm">{children}</ol>
+                        ),
+                        li: ({ children }) => (
+                          <li className="leading-snug">{children}</li>
+                        ),
+                        strong: ({ children }) => (
+                          <strong className="font-bold text-slate-950">{children}</strong>
+                        ),
+                        table: ({ children }) => (
+                          <div className="overflow-x-auto my-2 border border-slate-200 rounded-xl bg-white">
+                            <table className="min-w-full divide-y divide-slate-200 text-xs">{children}</table>
+                          </div>
+                        ),
+                        th: ({ children }) => (
+                          <th className="px-3 py-2 bg-slate-50 font-bold text-left text-slate-700">{children}</th>
+                        ),
+                        td: ({ children }) => (
+                          <td className="px-3 py-2 border-t border-slate-100 text-slate-700">{children}</td>
+                        ),
+                        code: ({ children }) => (
+                          <code className="bg-slate-200/80 px-1.5 py-0.5 rounded text-xs font-mono font-semibold text-slate-800">
+                            {children}
+                          </code>
+                        ),
+                      }}
+                    >
+                      {m.content}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  <div className="whitespace-pre-wrap">{m.content}</div>
+                )}
 
                 {/* Grounded Tool Execution Badges */}
                 {m.responseObj && m.responseObj.tool_calls_executed.length > 0 && (

@@ -3,6 +3,7 @@
 import React from "react";
 import { Card, Metric, Text, ProgressBar } from "@tremor/react";
 import { LeaveBalanceInfo } from "@/lib/types";
+import { formatDays } from "@/lib/utils";
 
 interface LeaveKpiCardProps {
   balance: LeaveBalanceInfo;
@@ -38,7 +39,7 @@ export const LeaveKpiCard: React.FC<LeaveKpiCardProps> = ({ balance }) => {
             </Text>
           </div>
           <div className="mt-2.5 flex items-baseline gap-1.5">
-            <Metric className="text-3xl font-extrabold text-slate-900">{available_balance}</Metric>
+            <Metric className="text-3xl font-extrabold text-slate-900">{formatDays(available_balance)}</Metric>
             <span className="text-xs font-semibold text-slate-500">days available</span>
           </div>
         </div>
@@ -55,9 +56,9 @@ export const LeaveKpiCard: React.FC<LeaveKpiCardProps> = ({ balance }) => {
 
       <div className="mt-4 pt-1">
         <div className="flex justify-between text-xs text-slate-500 mb-1.5 font-semibold">
-          <span>Used: {approved_used}d</span>
-          <span>Pending: {pending_reserved}d</span>
-          <span>Total: {total_accrued}d</span>
+          <span>Used: {formatDays(approved_used)}d</span>
+          <span>Pending: {formatDays(pending_reserved)}d</span>
+          <span>Total: {formatDays(total_accrued)}d</span>
         </div>
         <ProgressBar
           value={usedPercentage}

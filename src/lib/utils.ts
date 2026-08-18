@@ -5,6 +5,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function formatDays(val?: number | string | null): string {
+  if (val === undefined || val === null || isNaN(Number(val))) return "0";
+  const num = Number(val);
+  return num % 1 === 0 ? num.toFixed(0) : num.toFixed(1);
+}
+
 export function formatDate(dateString?: string): string {
   if (!dateString) return "";
   try {

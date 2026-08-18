@@ -23,7 +23,7 @@ import {
 import { LeaveKpiCard } from "@/components/analytics/LeaveKpiCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { formatDate, formatDateRange, getStatusBadgeVariant } from "@/lib/utils";
+import { formatDate, formatDateRange, getStatusBadgeVariant, formatDays } from "@/lib/utils";
 
 export default function DashboardPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -174,7 +174,7 @@ export default function DashboardPage() {
                           {formatDateRange(req.start_date, req.end_date)}
                         </td>
                         <td className="px-6 py-4 text-slate-900 font-bold">
-                          {req.working_days}d
+                          {formatDays(req.working_days)}d
                         </td>
                         <td className="px-6 py-4">
                           <span

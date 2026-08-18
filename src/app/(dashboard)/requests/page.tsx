@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Drawer } from "@/components/ui/drawer";
 import { PreValidationBreakdown } from "@/components/leave/PreValidationBreakdown";
-import { formatDate, formatDateRange, getStatusBadgeVariant } from "@/lib/utils";
+import { formatDate, formatDateRange, getStatusBadgeVariant, formatDays } from "@/lib/utils";
 
 export default function RequestsPage() {
   const [activeTab, setActiveTab] = useState<"history" | "whatif">("history");
@@ -188,7 +188,7 @@ export default function RequestsPage() {
                             {formatDateRange(req.start_date, req.end_date)}
                           </td>
                           <td className="px-6 py-4 text-slate-900 font-extrabold">
-                            {req.working_days}d
+                            {formatDays(req.working_days)}d
                           </td>
                           <td className="px-6 py-4">
                             <span
@@ -338,13 +338,13 @@ export default function RequestsPage() {
               <div>
                 <span className="text-xs text-slate-500 font-bold block">Calendar Days</span>
                 <span className="text-lg font-extrabold text-slate-800">
-                  {selectedRequest.calendar_days}d
+                  {formatDays(selectedRequest.calendar_days)}d
                 </span>
               </div>
               <div>
                 <span className="text-xs text-slate-500 font-bold block">Non-Working</span>
                 <span className="text-lg font-extrabold text-slate-800">
-                  {selectedRequest.weekend_days + selectedRequest.holiday_days}d
+                  {formatDays(selectedRequest.weekend_days + selectedRequest.holiday_days)}d
                 </span>
               </div>
               <div>
@@ -352,7 +352,7 @@ export default function RequestsPage() {
                   Net Deducted
                 </span>
                 <span className="text-lg font-extrabold text-indigo-900">
-                  {selectedRequest.working_days}d
+                  {formatDays(selectedRequest.working_days)}d
                 </span>
               </div>
             </div>

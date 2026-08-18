@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { Textarea } from "@/components/ui/input";
-import { formatDate, formatDateRange } from "@/lib/utils";
+import { formatDate, formatDateRange, formatDays } from "@/lib/utils";
 
 export default function ApprovalsPage() {
   const [requests, setRequests] = useState<LeaveRequestInfo[]>([]);
@@ -171,13 +171,13 @@ export default function ApprovalsPage() {
                   <div>
                     <span className="text-slate-500 block font-bold uppercase tracking-wider">Calculation Math</span>
                     <span className="font-semibold text-slate-700 mt-1 block text-xs">
-                      {req.calendar_days} cal − {req.weekend_days} wknd − {req.holiday_days} hol
+                      {formatDays(req.calendar_days)} cal − {formatDays(req.weekend_days)} wknd − {formatDays(req.holiday_days)} hol
                     </span>
                   </div>
                   <div>
                     <span className="text-indigo-700 block font-bold uppercase tracking-wider">Net Working Impact</span>
                     <span className="text-base font-extrabold text-indigo-950 mt-0.5 block">
-                      {req.working_days} working days
+                      {formatDays(req.working_days)} working days
                     </span>
                   </div>
                 </div>
@@ -204,8 +204,8 @@ export default function ApprovalsPage() {
                     </span>
                   </div>
                   <p className="text-xs text-indigo-900 font-medium leading-relaxed">
-                    Request for <strong>{req.working_days} working days</strong> ({req.calendar_days} calendar days spanning {req.location_name} holidays).
-                    Dynamic balance has pre-reserved {req.working_days} days. Policy workflow directs this request through multi-level approval tiers.
+                    Request for <strong>{formatDays(req.working_days)} working days</strong> ({formatDays(req.calendar_days)} calendar days spanning {req.location_name} holidays).
+                    Dynamic balance has pre-reserved {formatDays(req.working_days)} days. Policy workflow directs this request through multi-level approval tiers.
                   </p>
                   <div className="flex items-center gap-2 pt-1">
                     <span className="text-xs font-bold text-indigo-900">
@@ -236,7 +236,7 @@ export default function ApprovalsPage() {
         title={actionType === "APPROVE" ? "Approve Leave Request" : "Reject Leave Request"}
         description={
           selectedRequest
-            ? `${selectedRequest.employee_name} • ${selectedRequest.working_days} working days (${selectedRequest.start_date} to ${selectedRequest.end_date})`
+            ? `${selectedRequest.employee_name} • ${formatDays(selectedRequest.working_days)} working days (${selectedRequest.start_date} to ${selectedRequest.end_date})`
             : undefined
         }
       >
