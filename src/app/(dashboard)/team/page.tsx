@@ -153,9 +153,12 @@ export default function TeamManagementPage() {
     try {
       setCopiedId(userId);
       const res = await api.resendInvite(userId);
-      const inviteUrl = res.invite_url || `${window.location.origin}/accept-invitation?email=${encodeURIComponent(email)}`;
-      await navigator.clipboard.writeText(inviteUrl);
-      setSuccessToast(`Invitation link for ${email} copied to clipboard!`);
+      if (res.invite_url) {
+        await navigator.clipboard.writeText(res.invite_url);
+        setSuccessToast(`Secure invitation link with token copied for ${email}!`);
+      } else {
+        throw new Error("Invitation token URL was not generated. Please try again.");
+      }
       setTimeout(() => setCopiedId(null), 2500);
     } catch (err: any) {
       alert(err.message || "Failed to copy invite link.");
@@ -542,10 +545,25 @@ export default function TeamManagementPage() {
                 )}
 
                 <form onSubmit={handleProvisionSubmit} className="space-y-4">
+                  {/* Context pill for Manager */}
+                  {!isHRAdmin && (
+                    <div className="p-3 rounded-xl bg-indigo-50/60 border border-indigo-100 flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2 text-indigo-900 font-medium">
+                        <Building2 className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>
+                          {user?.department_name || "Engineering"} • {user?.location_name || "Office HQ"}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-bold uppercase text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-md">
+                        Direct Team Reporting
+                      </span>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        Full Name
+                        Full Name *
                       </label>
                       <input
                         type="text"
@@ -559,7 +577,7 @@ export default function TeamManagementPage() {
 
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        Work Email
+                        Work Email *
                       </label>
                       <input
                         type="email"
@@ -572,86 +590,94 @@ export default function TeamManagementPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        Department
-                      </label>
-                      <select
-                        value={formData.department_id}
-                        onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-                      >
-                        {departments.map((d) => (
-                          <option key={d.id} value={d.id}>
-                            {d.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                  {/* Only HR Admins configure global department and office location */}
+                  {isHRAdmin && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Department
+                        </label>
+                        <select
+                          value={formData.department_id}
+                          onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
+                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                        >
+                          {departments.map((d) => (
+                            <option key={d.id} value={d.id}>
+                              {d.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        Office Location
-                      </label>
-                      <select
-                        value={formData.location_id}
-                        onChange={(e) => setFormData({ ...formData, location_id: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-                      >
-                        {locations.map((l) => (
-                          <option key={l.id} value={l.id}>
-                            {l.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {provisionType === "MANAGER" ? (
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        New Team Name
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g. Infrastructure Platform"
-                        value={formData.team_name}
-                        onChange={(e) => setFormData({ ...formData, team_name: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-                      />
-                    </div>
-                  ) : (
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        Assigned Team
-                      </label>
-                      <select
-                        value={formData.team_id}
-                        onChange={(e) => setFormData({ ...formData, team_id: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-                      >
-                        {teams.map((t) => (
-                          <option key={t.id} value={t.id}>
-                            {t.name} ({t.department_name})
-                          </option>
-                        ))}
-                      </select>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Office Location
+                        </label>
+                        <select
+                          value={formData.location_id}
+                          onChange={(e) => setFormData({ ...formData, location_id: e.target.value })}
+                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                        >
+                          {locations.map((l) => (
+                            <option key={l.id} value={l.id}>
+                              {l.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   )}
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      Designation / Title
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Senior Software Engineer"
-                      value={formData.designation}
-                      onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Designation / Title
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Senior Software Engineer"
+                        value={formData.designation}
+                        onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                      />
+                    </div>
+
+                    {provisionType === "MANAGER" ? (
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          New Team Name
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Infrastructure Platform"
+                          value={formData.team_name}
+                          onChange={(e) => setFormData({ ...formData, team_name: e.target.value })}
+                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Assigned Team
+                        </label>
+                        <select
+                          value={formData.team_id}
+                          onChange={(e) => setFormData({ ...formData, team_id: e.target.value })}
+                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                        >
+                          {(isHRAdmin
+                            ? teams
+                            : teams.filter((t) => !user?.department_id || t.department_id === user?.department_id)
+                          ).map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                   </div>
 
                   <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
