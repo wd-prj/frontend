@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/navigation";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -11,6 +10,7 @@ import {
   BarChart3,
   ShieldCheck,
   Sparkles,
+  Users,
 } from "lucide-react";
 import { UserProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -42,6 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             icon: CheckSquare,
             badge: pendingApprovalsCount > 0 ? pendingApprovalsCount : undefined,
           },
+          { name: "Team & Directory", href: "/team", icon: Users },
           { name: "Workforce Intelligence", href: "/intelligence", icon: BarChart3 },
         ]
       : []),
@@ -59,7 +60,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-4">
         <button
           onClick={onOpenAIChat}
-          className="w-full rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-indigo-50/60 p-3.5 text-left border border-indigo-200/80 shadow-2xs hover:border-indigo-400 hover:shadow-xs transition-all group"
+          className="w-full rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-indigo-50/60 p-3.5 text-left border border-indigo-200/80 shadow-2xs hover:border-indigo-400 hover:shadow-xs transition-all group cursor-pointer"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 font-bold text-xs text-indigo-900">

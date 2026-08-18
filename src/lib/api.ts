@@ -1,6 +1,5 @@
 import {
   UserProfile,
-  RegisterData,
   OrgMetaResponse,
   LeaveTypeInfo,
   LeaveBalanceInfo,
@@ -10,6 +9,11 @@ import {
   WorkforceIntelligenceOverview,
   NotificationItem,
   AuditLogItem,
+  TeamInfo,
+  TeamMemberInfo,
+  InvitationDetails,
+  InviteManagerPayload,
+  InviteEmployeePayload,
   AIChatResponse,
 } from "./types";
 
@@ -53,12 +57,6 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
 
-  register: (data: RegisterData) =>
-    request<UserProfile>("/auth/register", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-
   getOrgMetadata: () => request<OrgMetaResponse>("/auth/org-metadata"),
 
   logout: () =>
@@ -67,6 +65,45 @@ export const api = {
     }),
 
   getMe: () => request<UserProfile>("/auth/me"),
+
+  // Invitations (Public Token Validation & Redemption)
+  getInvitationDetails: (token: string) =>
+    request<InvitationDetails>(`/auth/invitation-details?token=${encodeURIComponent(token)}`),
+
+  acceptInvitation: (token: string, password: string) =>
+    request<UserProfile>("/auth/accept-invitation", {
+      method: "POST",
+      body: JSON.stringify({ token, password }),
+    }),
+
+  // Provisioning & Team Hierarchy (HR Admin / Manager)
+  inviteManager: (payload: InviteManagerPayload) =>
+    request<{ message: string; employee_id: string; invitation_id: string; team_id: string }>(
+      "/provisioning/invite-manager",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    ),
+
+  inviteEmployee: (payload: InviteEmployeePayload) =>
+    request<{ message: string; employee_id: string; invitation_id: string }>(
+      "/provisioning/invite-employee",
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    ),
+
+  getTeamMembers: () => request<TeamMemberInfo[]>("/provisioning/members"),
+
+  getTeams: () => request<TeamInfo[]>("/provisioning/teams"),
+
+  resendInvite: (userId: string) =>
+    request<{ message: string }>("/provisioning/resend-invite", {
+      method: "POST",
+      body: JSON.stringify({ user_id: userId }),
+    }),
 
   // Employee
   getMyProfile: () => request<UserProfile>("/employee/profile"),

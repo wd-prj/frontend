@@ -1,5 +1,7 @@
 export type UserRole = "EMPLOYEE" | "MANAGER" | "HR_ADMIN";
 
+export type UserStatus = "INVITED" | "ACTIVE" | "SUSPENDED" | "DEACTIVATED";
+
 export type LeaveRequestStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
 
 export type ApprovalStepStatus = "PENDING" | "APPROVED" | "REJECTED" | "SKIPPED";
@@ -8,12 +10,15 @@ export interface UserProfile {
   user_id: string;
   email: string;
   role: UserRole;
+  status?: UserStatus;
   employee_id?: string;
   employee_name?: string;
   location_id?: string;
   location_name?: string;
   department_id?: string;
   department_name?: string;
+  team_id?: string;
+  team_name?: string;
   designation?: string;
 }
 
@@ -30,7 +35,7 @@ export interface OrgMetaResponse {
 export interface RegisterData {
   full_name: string;
   email: string;
-  password: string;
+  password?: string;
   designation?: string;
   department_id?: string;
   location_id?: string;
@@ -62,6 +67,72 @@ export interface DepartmentInfo {
   name: string;
   code: string;
   description?: string;
+}
+
+export interface TeamInfo {
+  id: string;
+  name: string;
+  code: string;
+  department_id: string;
+  department_name: string;
+  manager_id?: string | null;
+  manager_name?: string | null;
+  member_count: number;
+}
+
+export interface TeamMemberInfo {
+  id: string;
+  user_id: string;
+  employee_code: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  email: string;
+  role: UserRole;
+  status: UserStatus;
+  department_id: string;
+  department_name: string;
+  team_id?: string | null;
+  team_name?: string | null;
+  primary_manager_id?: string | null;
+  manager_name?: string | null;
+  location_id: string;
+  location_name: string;
+  designation: string;
+  hire_date: string;
+  created_at: string;
+}
+
+export interface InvitationDetails {
+  invitation_id: string;
+  email: string;
+  full_name: string;
+  role: UserRole;
+  department_name: string;
+  team_name: string;
+  manager_name?: string | null;
+  location_name: string;
+  designation: string;
+  expires_at: string;
+}
+
+export interface InviteManagerPayload {
+  full_name: string;
+  email: string;
+  department_id: string;
+  team_name: string;
+  location_id: string;
+  designation?: string;
+}
+
+export interface InviteEmployeePayload {
+  full_name: string;
+  email: string;
+  department_id: string;
+  team_id: string;
+  location_id: string;
+  designation?: string;
+  primary_manager_id?: string;
 }
 
 export interface HolidayInfo {
