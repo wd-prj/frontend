@@ -1,23 +1,58 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ShieldCheck, Layers, Clock, User, Filter } from "lucide-react";
+import { ShieldCheck, ShieldAlert, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { api } from "@/lib/api";
-import { AuditLogItem } from "@/lib/types";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { AuditLogItem, UserProfile } from "@/lib/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 
 export default function AuditPage() {
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [logs, setLogs] = useState<AuditLogItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     api
-      .getAuditTrail(100)
-      .then(setLogs)
-      .catch((err) => console.error("Audit load error", err))
+      .getMe()
+      .then((profile) => {
+        setUser(profile);
+        if (profile.role === "HR_ADMIN") {
+          return api.getAuditTrail(100).then(setLogs);
+        } else {
+          setError("Access Restricted: Only HR Administrators have permission to view the compliance audit trail.");
+        }
+      })
+      .catch((err) => {
+        console.error("Audit load error", err);
+        setError("Failed to load audit trail.");
+      })
       .finally(() => setIsLoading(false));
   }, []);
+
+  if (!isLoading && user && user.role !== "HR_ADMIN") {
+    return (
+      <div className="max-w-2xl mx-auto py-16 text-center space-y-4">
+        <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-3xl flex items-center justify-center mx-auto border border-rose-200">
+          <ShieldAlert className="w-8 h-8" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-900">HR Administrator Access Required</h2>
+        <p className="text-sm text-slate-600">
+          The Enterprise Compliance Audit Trail contains immutable system-wide logs and is restricted exclusively to authorized HR Administrators.
+        </p>
+        <div className="pt-2">
+          <Link href="/dashboard">
+            <Button variant="outline" className="gap-2">
+              <ArrowLeft className="w-4 h-4" /> Return to Dashboard
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -30,7 +65,7 @@ export default function AuditPage() {
           </p>
         </div>
         <span className="text-xs px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 font-bold border border-slate-200">
-          Compliance & Traceability
+          HR Admin Compliance
         </span>
       </div>
 
@@ -38,6 +73,8 @@ export default function AuditPage() {
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-14 text-center text-sm text-slate-400">Loading audit trail...</div>
+          ) : error ? (
+            <div className="p-14 text-center text-sm text-rose-500 font-medium">{error}</div>
           ) : logs.length === 0 ? (
             <div className="p-14 text-center text-sm text-slate-400">No audit events recorded yet.</div>
           ) : (

@@ -29,6 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const pathname = usePathname();
   const isManagerOrAdmin = user?.role === "MANAGER" || user?.role === "HR_ADMIN";
+  const isAdmin = user?.role === "HR_ADMIN";
 
   const navigation = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -46,7 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           { name: "Workforce Intelligence", href: "/intelligence", icon: BarChart3 },
         ]
       : []),
-    { name: "Audit Trail", href: "/audit", icon: ShieldCheck },
+    ...(isAdmin ? [{ name: "Audit Trail", href: "/audit", icon: ShieldCheck }] : []),
   ];
 
   return (
