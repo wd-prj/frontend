@@ -107,7 +107,7 @@ export const api = {
 
   // Provisioning & Team Hierarchy (HR Admin / Manager)
   inviteManager: (payload: InviteManagerPayload) =>
-    request<{ message: string; employee_id: string; invitation_id: string; team_id: string }>(
+    request<{ message: string; employee_id: string; invitation_id: string; team_id: string; invite_url?: string }>(
       "/provisioning/invite-manager",
       {
         method: "POST",
@@ -116,7 +116,7 @@ export const api = {
     ),
 
   inviteEmployee: (payload: InviteEmployeePayload) =>
-    request<{ message: string; employee_id: string; invitation_id: string }>(
+    request<{ message: string; employee_id: string; invitation_id: string; invite_url?: string }>(
       "/provisioning/invite-employee",
       {
         method: "POST",
@@ -129,7 +129,7 @@ export const api = {
   getTeams: () => request<TeamInfo[]>("/provisioning/teams"),
 
   resendInvite: (userId: string) =>
-    request<{ message: string }>("/provisioning/resend-invite", {
+    request<{ message: string; invite_url?: string }>("/provisioning/resend-invite", {
       method: "POST",
       body: JSON.stringify({ user_id: userId }),
     }),
