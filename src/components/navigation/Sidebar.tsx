@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Sparkles,
   Users,
+  Sliders,
 } from "lucide-react";
 import { UserProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -47,7 +48,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           { name: "Workforce Intelligence", href: "/intelligence", icon: BarChart3 },
         ]
       : []),
-    ...(isAdmin ? [{ name: "Audit Trail", href: "/audit", icon: ShieldCheck }] : []),
+    ...(isAdmin
+      ? [
+          { name: "Leave & Policies", href: "/policies", icon: Sliders },
+          { name: "Audit Trail", href: "/audit", icon: ShieldCheck },
+        ]
+      : []),
   ];
 
   return (

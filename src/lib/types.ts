@@ -363,3 +363,79 @@ export interface AIChatResponse {
   tool_calls_executed: GroundedToolCall[];
   is_grounded: boolean;
 }
+
+export interface AccrualPolicyDetail {
+  id: string;
+  location_id: string;
+  location_name: string;
+  frequency: string;
+  annual_entitlement: number;
+  max_carry_forward: number;
+}
+
+export interface LeavePolicyDetail {
+  id: string;
+  location_id: string;
+  location_name: string;
+  max_consecutive_days?: number;
+  requires_document_after_days?: number;
+  advance_notice_days: number;
+  carry_forward_limit: number;
+  allow_negative_balance: boolean;
+  is_active: boolean;
+}
+
+export interface FullLeaveTypeConfiguration {
+  id: string;
+  name: string;
+  code: string;
+  description?: string;
+  is_paid: boolean;
+  color_code: string;
+  is_active: boolean;
+  accrual_policies: AccrualPolicyDetail[];
+  leave_policies: LeavePolicyDetail[];
+}
+
+export interface LeaveConfigOverview {
+  leave_types: FullLeaveTypeConfiguration[];
+  locations: { id: string; name: string; country: string }[];
+}
+
+export interface CreateLeaveTypePayload {
+  name: string;
+  code: string;
+  description?: string;
+  is_paid?: boolean;
+  color_code?: string;
+  annual_entitlement: number;
+  max_carry_forward: number;
+  frequency?: "YEARLY" | "MONTHLY" | "QUARTERLY";
+  max_consecutive_days?: number;
+  advance_notice_days?: number;
+  requires_document_after_days?: number;
+  allow_negative_balance?: boolean;
+}
+
+export interface UpdateAccrualPolicyPayload {
+  annual_entitlement: number;
+  max_carry_forward: number;
+  frequency?: "YEARLY" | "MONTHLY" | "QUARTERLY";
+  sync_existing_employees?: boolean;
+}
+
+export interface UpdateLeavePolicyPayload {
+  max_consecutive_days?: number;
+  advance_notice_days: number;
+  requires_document_after_days?: number;
+  carry_forward_limit: number;
+  allow_negative_balance: boolean;
+}
+
+export interface AdjustBalancePayload {
+  employee_id: string;
+  leave_type_id: string;
+  adjustment_days: number;
+  year?: number;
+  reason: string;
+}

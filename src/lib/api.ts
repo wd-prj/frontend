@@ -199,6 +199,46 @@ export const api = {
       method: "POST",
     }),
 
+  // Admin Policy & Accrual Governance
+  getLeaveConfigurations: () =>
+    request<import("./types").LeaveConfigOverview>("/admin/leave-configurations"),
+
+  createLeaveType: (payload: import("./types").CreateLeaveTypePayload) =>
+    request<import("./types").FullLeaveTypeConfiguration>("/admin/leave-types", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  updateLeaveType: (
+    leaveTypeId: string,
+    payload: { name?: string; description?: string; is_paid?: boolean; color_code?: string; is_active?: boolean }
+  ) =>
+    request<{ message: string }>(`/admin/leave-types/${leaveTypeId}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    }),
+
+  updateAccrualPolicy: (policyId: string, payload: import("./types").UpdateAccrualPolicyPayload) =>
+    request<{ message: string; annual_entitlement: number; max_carry_forward: number; employees_synced: number }>(
+      `/admin/accrual-policies/${policyId}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      }
+    ),
+
+  updateLeavePolicy: (policyId: string, payload: import("./types").UpdateLeavePolicyPayload) =>
+    request<{ message: string }>(`/admin/leave-policies/${policyId}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    }),
+
+  adjustEmployeeBalance: (payload: import("./types").AdjustBalancePayload) =>
+    request<{ message: string; new_manual_adjustments: number }>("/admin/adjust-employee-balance", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
   // Admin & Audit
   getAuditTrail: (limit = 50) =>
     request<AuditLogItem[]>(`/admin/audit-trail?limit=${limit}`),
